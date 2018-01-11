@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Required permissions
     private static final String[] requiredPermissions = new String[] {
-            Manifest.permission.READ_PHONE_STATE };
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_CONTACTS };
 
     // Request codes
     private static final int REQUEST_CODE_PERMISSIONS = 1;

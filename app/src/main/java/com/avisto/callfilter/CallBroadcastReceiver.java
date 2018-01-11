@@ -50,18 +50,18 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
 
             if (state != mLastState) {
                 mLastState = state;
-                onCallStateChanged(state, number);
+                onCallStateChanged(context, state, number);
             }
         }
     }
 
-    private void onCallStateChanged(int state, String number) {
+    private void onCallStateChanged(Context context, int state, String number) {
         final String TAG = this.TAG + ", onCallStateChanged()";
         switch (state) {
             case  TelephonyManager.CALL_STATE_RINGING:
                 // Phone call ringing, waiting for decision
                 Log.d(TAG, "CALL_STATE_RINGING with number: " + number);
-                // TODO
+                Log.d(TAG, "Matching contact: " + ContactHelper.getContacByNumber(context, number));
                 break;
         }
     }
