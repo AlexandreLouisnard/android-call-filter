@@ -10,6 +10,10 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.android.internal.telephony.ITelephony;
+
+import java.lang.reflect.Method;
+
 public class CallBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = CallBroadcastReceiver.class.getSimpleName();
@@ -59,14 +63,47 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         final String TAG = this.TAG + ", onCallStateChanged()";
         Contact contact;
         switch (state) {
-            case  TelephonyManager.CALL_STATE_RINGING:
+            case TelephonyManager.CALL_STATE_RINGING:
                 // Phone call ringing, waiting for decision
                 contact = ContactHelper.getContactByNumber(context, number);
                 Log.d(TAG, "CALL_STATE_RINGING with number: " + number);
                 if (contact != null) {
-                    Log.d(TAG, "Matching contact: " + contact.getmDisplayName());
+                    Log.d(TAG, "Matching incoming call contact: " + contact.getmDisplayName());
+                } else {
+                    Log.d(TAG, "Unknown incoming call contact");
                 }
+
+
                 break;
         }
     }
+
+    private void rejectIncomingCall(Context context) {
+        ITelephony telephonyService;
+        final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            final Class c = Class.forName(telephonyManager.getClass().getName());
+            final Method m = c.getDeclaredMethod("getITelephony");
+            m.setAccessible(true);
+            telephonyService = (ITelephony) m.invoke(telephonyManager);
+            telephonyService.endCall();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void silenceIncomingCall(Context context) {
+        ITelephony telephonyService;
+        final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            final Class c = Class.forName(telephonyManager.getClass().getName());
+            final Method m = c.getDeclaredMethod("getITelephony");
+            m.setAccessible(true);
+            telephonyService = (ITelephony) m.invoke(telephonyManager);
+            telephonyService.silenceRinger();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

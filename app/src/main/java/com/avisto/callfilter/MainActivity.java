@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     // Required permissions
     private static final String[] requiredPermissions = new String[] {
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_CONTACTS };
 
     // Groups
