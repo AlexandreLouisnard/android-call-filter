@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         switch (compoundButton.getId()) {
             case R.id.switch_global:
+                SharedPreferencesHelper.setSharedPreferenceBoolean(this, SharedPreferencesHelper.KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, isChecked);
                 mRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         }
     }

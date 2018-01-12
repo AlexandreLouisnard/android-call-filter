@@ -73,6 +73,9 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
                     Log.d(TAG, "Unknown incoming call contact");
                 }
 
+                if (SharedPreferencesHelper.getSharedPreferenceBoolean(context, SharedPreferencesHelper.KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, false)) {
+                    rejectIncomingCall(context);
+                }
 
                 break;
         }
