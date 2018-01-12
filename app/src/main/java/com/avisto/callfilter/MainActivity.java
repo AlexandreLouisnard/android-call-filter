@@ -13,24 +13,28 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * Created by louisnard on 11/01/2018.
  */
 
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, GroupsAdapter.GroupFilterCheckedChangedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    // TODO: texts are not so clear. Activating the switch BLOCKS the group from calling
+
     // Required permissions
-    private static final String[] requiredPermissions = new String[] {
+    private static final String[] requiredPermissions = new String[]{
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.READ_CONTACTS };
+            Manifest.permission.READ_CONTACTS};
 
     // Groups
     private List<Group> mGroups;
+    private HashSet<String> mGroupIdsToFilter;
 
     // Views
     private Switch mGlobalSwitch;
@@ -39,9 +43,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     // Request codes
     private static final int REQUEST_CODE_PERMISSIONS = 1;
-
-    private BroadcastReceiver mBroadcastReceiver = new CallBroadcastReceiver();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,18 +62,21 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         // Get groups
         mGroups = GroupHelper.getAllGroups(this);
+        mGroupIdsToFilter = SharedPreferencesHelper.getGroupIdsToFilter(this);
 
         // Get views
         mGlobalSwitch = findViewById(R.id.switch_global);
         mRecyclerView = findViewById(R.id.recycler_view);
 
         // Set groups to recycler view
-        mGroupsAdapter = new GroupsAdapter(this, mGroups);
+        mGroupsAdapter = new GroupsAdapter(this, mGroups, mGroupIdsToFilter, this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setAdapter(mGroupsAdapter);
 
         // Set listeners
         mGlobalSwitch.setOnCheckedChangeListener(this);
+
+        updateUI();
 
     }
 
@@ -81,8 +85,26 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         switch (compoundButton.getId()) {
             case R.id.switch_global:
-                SharedPreferencesHelper.setSharedPreferenceBoolean(this, SharedPreferencesHelper.KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, isChecked);
+                SharedPreferencesHelper.isGlobalFilteringActivated(this, isChecked);
                 mRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         }
+    }
+
+    // Recycler view
+    @Override
+    public void onGroupFilterCheckedChanged(String groupId, boolean isChecked) {
+        if (isChecked) {
+            mGroupIdsToFilter.add(groupId);
+        } else {
+            mGroupIdsToFilter.remove(groupId);
+        }
+        SharedPreferencesHelper.setGroupIdsToFilter(this, mGroupIdsToFilter);
+    }
+
+    private void updateUI() {
+        // Global filtering
+        final boolean isGlobalFilteringActivated = SharedPreferencesHelper.isGlobalFilteringActivated(this);
+        mGlobalSwitch.setChecked(isGlobalFilteringActivated);
+        mRecyclerView.setVisibility(isGlobalFilteringActivated ? View.VISIBLE : View.GONE);
     }
 }

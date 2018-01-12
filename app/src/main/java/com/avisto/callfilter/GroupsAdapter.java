@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -17,10 +19,19 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
 
     private Context mContext;
     private List<Group> mGroups;
+    private HashSet<String> mGroupIdsToFilter;
+    private GroupFilterCheckedChangedListener mListener;
 
-    public GroupsAdapter(Context context, List<Group> mGroups) {
+    // Recycler view switchs listener
+    public interface GroupFilterCheckedChangedListener {
+        void onGroupFilterCheckedChanged(String groupId, boolean isChecked);
+    }
+
+    public GroupsAdapter(Context context, List<Group> groups, HashSet<String> groupIdsToFilter, GroupFilterCheckedChangedListener listener) {
         mContext = context;
-        this.mGroups = mGroups;
+        mGroups = groups;
+        mGroupIdsToFilter = groupIdsToFilter;
+        mListener = listener;
     }
 
     @Override
@@ -30,12 +41,20 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
     }
 
     @Override
-    public void onBindViewHolder(GroupsAdapter.GroupViewHolder holder, int position) {
+    public void onBindViewHolder(GroupsAdapter.GroupViewHolder holder, final int position) {
         if(mGroups == null) {
             holder.mSwitch.setText(mContext.getText(R.string.no_groups_found));
             holder.mSwitch.setEnabled(false);
         } else {
-            holder.mSwitch.setText(mGroups.get(position).getmTitle());
+            final Group group = mGroups.get(position);
+            holder.mSwitch.setText(group.getmTitle());
+            holder.mSwitch.setChecked(mGroupIdsToFilter.contains(group.getmId()));
+            holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    mListener.onGroupFilterCheckedChanged(group.getmId(), isChecked);
+                }
+            });
         }
     }
 

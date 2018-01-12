@@ -30,8 +30,12 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         final String TAG = this.TAG + ", onReceive()";
 
         final String action = intent.getAction();
-
         Log.d(TAG, "action = " + action);
+
+        if (!SharedPreferencesHelper.isGlobalFilteringActivated(context)) {
+            Log.d(TAG, "Call filtering is NOT activating, returning now");
+            return;
+        }
 
         if (action == ACTION_PHONE_STATE) {
             // Get phone call state and number
@@ -73,9 +77,9 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
                     Log.d(TAG, "Unknown incoming call contact");
                 }
 
-                if (SharedPreferencesHelper.getSharedPreferenceBoolean(context, SharedPreferencesHelper.KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, false)) {
-                    rejectIncomingCall(context);
-                }
+                // TODO: check whether the contact is known, has a group and whether the gruop is blocked or not
+
+                rejectIncomingCall(context);
 
                 break;
         }
