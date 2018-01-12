@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Permissions already granted");
         }
 
-        mGroups = ContactHelper.getAllGroups(this);
-        Log.d(TAG, "Found " + mGroups.size() + " groups");
+        // Get groups
+        mGroups = GroupHelper.getAllGroups(this);
 
     }
 
