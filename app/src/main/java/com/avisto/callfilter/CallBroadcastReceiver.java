@@ -57,11 +57,15 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
 
     private void onCallStateChanged(Context context, int state, String number) {
         final String TAG = this.TAG + ", onCallStateChanged()";
+        Contact contact;
         switch (state) {
             case  TelephonyManager.CALL_STATE_RINGING:
                 // Phone call ringing, waiting for decision
+                contact = ContactHelper.getContactByNumber(context, number);
                 Log.d(TAG, "CALL_STATE_RINGING with number: " + number);
-                Log.d(TAG, "Matching contact: " + ContactHelper.getContactByNumber(context, number));
+                if (contact != null) {
+                    Log.d(TAG, "Matching contact: " + contact.getmDisplayName());
+                }
                 break;
         }
     }

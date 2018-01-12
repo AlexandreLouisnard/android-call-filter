@@ -1,5 +1,7 @@
 package com.avisto.callfilter;
 
+import java.util.HashSet;
+
 /**
  * Created by louisnard on 12/01/2018.
  */
@@ -8,12 +10,11 @@ public class Contact {
 
     private String mId;
     private String mDisplayName;
-    private Group mGroup;
+    private HashSet<String> mGroupIds;
 
-    public Contact(String mId, String mDisplayName, Group mGroup) {
+    public Contact(String mId, String mDisplayName) {
         this.mId = mId;
         this.mDisplayName = mDisplayName;
-        this.mGroup = mGroup;
     }
 
     public String getmId() {
@@ -32,11 +33,18 @@ public class Contact {
         this.mDisplayName = mDisplayName;
     }
 
-    public Group getmGroup() {
-        return mGroup;
+    public HashSet<String> getmGroupIds() {
+        return mGroupIds;
     }
 
-    public void setmGroup(Group mGroup) {
-        this.mGroup = mGroup;
+    public void setmGroupIds(HashSet<String> mGroupIds) {
+        this.mGroupIds = mGroupIds;
+    }
+
+    public void addGroupId(String groupId) {
+        if (mGroupIds == null) {
+            mGroupIds = new HashSet<>();
+        }
+        mGroupIds.add(groupId);
     }
 }
