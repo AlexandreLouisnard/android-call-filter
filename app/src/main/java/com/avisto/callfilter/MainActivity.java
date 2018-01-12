@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.List;
+
 /**
  * Created by louisnard on 11/01/2018.
  */
@@ -19,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String[] requiredPermissions = new String[] {
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_CONTACTS };
+
+    // Groups
+    private List<Group> mGroups;
 
     // Request codes
     private static final int REQUEST_CODE_PERMISSIONS = 1;
@@ -41,5 +46,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Permissions already granted");
         }
+
+        mGroups = ContactHelper.getAllGroups(this);
+        Log.d(TAG, "Found " + mGroups.size() + " groups");
+
     }
+
+
 }

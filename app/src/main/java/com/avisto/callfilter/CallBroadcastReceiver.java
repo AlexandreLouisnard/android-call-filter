@@ -61,7 +61,7 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
             case  TelephonyManager.CALL_STATE_RINGING:
                 // Phone call ringing, waiting for decision
                 Log.d(TAG, "CALL_STATE_RINGING with number: " + number);
-                Log.d(TAG, "Matching contact: " + ContactHelper.getContacByNumber(context, number));
+                Log.d(TAG, "Matching contact: " + ContactHelper.getContactByNumber(context, number));
                 break;
         }
     }
