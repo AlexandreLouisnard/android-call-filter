@@ -30,8 +30,8 @@ public class GroupHelper {
         final List<Group> groups = new ArrayList<>();
         if (groupsCursor != null) {
             while (groupsCursor.moveToNext()) {
-                final String id = groupsCursor.getString(0);
-                final String title = groupsCursor.getString(1);
+                final String id = groupsCursor.getString(groupsCursor.getColumnIndex(ContactsContract.Groups._ID));
+                final String title = groupsCursor.getString(groupsCursor.getColumnIndex(ContactsContract.Groups.TITLE));
                 groups.add(new Group(id, title));
             }
         }

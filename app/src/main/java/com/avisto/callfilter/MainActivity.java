@@ -5,7 +5,13 @@ import android.content.BroadcastReceiver;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import java.util.List;
 
@@ -13,7 +19,7 @@ import java.util.List;
  * Created by louisnard on 11/01/2018.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -25,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Groups
     private List<Group> mGroups;
+
+    // Views
+    private Switch mGlobalSwitch;
+    private RecyclerView mRecyclerView;
+    private GroupsAdapter mGroupsAdapter;
 
     // Request codes
     private static final int REQUEST_CODE_PERMISSIONS = 1;
@@ -51,7 +62,26 @@ public class MainActivity extends AppCompatActivity {
         // Get groups
         mGroups = GroupHelper.getAllGroups(this);
 
+        // Get views
+        mGlobalSwitch = findViewById(R.id.switch_global);
+        mRecyclerView = findViewById(R.id.recycler_view);
+
+        // Set groups to recycler view
+        mGroupsAdapter = new GroupsAdapter(this, mGroups);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setAdapter(mGroupsAdapter);
+
+        // Set listeners
+        mGlobalSwitch.setOnCheckedChangeListener(this);
+
     }
 
 
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        switch (compoundButton.getId()) {
+            case R.id.switch_global:
+                mRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        }
+    }
 }

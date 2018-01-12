@@ -1,3 +1,9 @@
 <resources>
+
     <string name="app_name">Call Filter</string>
+
+    <string name="switch_enable_filtering">Enable filtering</string>
+
+    <string name="no_groups_found">No contact groups found</string>
+
 </resources>
