@@ -24,7 +24,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
 
     // Recycler view switchs listener
     public interface GroupFilterCheckedChangedListener {
-        void onGroupFilterCheckedChanged(String groupId, boolean isChecked);
+        void onGroupFilterCheckedChanged(String groupId, boolean isFiltered);
     }
 
     public GroupsAdapter(Context context, List<Group> groups, HashSet<String> groupIdsToFilter, GroupFilterCheckedChangedListener listener) {
@@ -43,16 +43,16 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
     @Override
     public void onBindViewHolder(GroupsAdapter.GroupViewHolder holder, final int position) {
         if(mGroups == null) {
-            holder.mSwitch.setText(mContext.getText(R.string.no_groups_found));
-            holder.mSwitch.setEnabled(false);
+            holder.mFilterGroupSwitch.setText(mContext.getText(R.string.no_groups_found));
+            holder.mFilterGroupSwitch.setEnabled(false);
         } else {
             final Group group = mGroups.get(position);
-            holder.mSwitch.setText(group.getmTitle());
-            holder.mSwitch.setChecked(mGroupIdsToFilter.contains(group.getmId()));
-            holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.mFilterGroupSwitch.setText(group.getmTitle());
+            holder.mFilterGroupSwitch.setChecked(mGroupIdsToFilter.contains(group.getmId()));
+            holder.mFilterGroupSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    mListener.onGroupFilterCheckedChanged(group.getmId(), isChecked);
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isFiltered) {
+                    mListener.onGroupFilterCheckedChanged(group.getmId(), isFiltered);
                 }
             });
         }
@@ -64,11 +64,11 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
     }
 
     public class GroupViewHolder extends RecyclerView.ViewHolder {
-        public Switch mSwitch;
+        public Switch mFilterGroupSwitch;
 
         public GroupViewHolder(View itemView) {
             super(itemView);
-            mSwitch = itemView.findViewById(R.id.switch_group);
+            mFilterGroupSwitch = itemView.findViewById(R.id.switch_filter_contact_group);
         }
     }
 }

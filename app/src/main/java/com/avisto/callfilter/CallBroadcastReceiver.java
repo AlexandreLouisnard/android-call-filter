@@ -13,8 +13,13 @@ import android.util.Log;
 import com.android.internal.telephony.ITelephony;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CallBroadcastReceiver extends BroadcastReceiver {
+
+    // TODO improvement : choose between reject call (goes to voicemail) and silence call (no ring tone)
+    // TODO improvement : generate notification when a call has been blocked
 
     private static final String TAG = CallBroadcastReceiver.class.getSimpleName();
 
@@ -32,7 +37,7 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         final String action = intent.getAction();
         Log.d(TAG, "action = " + action);
 
-        if (!SharedPreferencesHelper.isGlobalFilteringActivated(context)) {
+        if (!SharedPreferencesHelper.isCallFilteringActivated(context)) {
             Log.d(TAG, "Call filtering is NOT activating, returning now");
             return;
         }
@@ -71,21 +76,41 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
                 // Phone call ringing, waiting for decision
                 contact = ContactHelper.getContactByNumber(context, number);
                 Log.d(TAG, "CALL_STATE_RINGING with number: " + number);
-                if (contact != null) {
-                    Log.d(TAG, "Matching incoming call contact: " + contact.getmDisplayName());
-                } else {
-                    Log.d(TAG, "Unknown incoming call contact");
+
+                if (SharedPreferencesHelper.filterAllContacts(context)) {
+                    rejectIncomingCall(context);
+                    return;
                 }
 
-                // TODO: check whether the contact is known, has a group and whether the gruop is blocked or not
-
-                rejectIncomingCall(context);
-
+                if(contact == null) {
+                    // Unkwnown contact
+                    Log.d(TAG, "Unknown contact incoming call : " + (SharedPreferencesHelper.filterUnkwnownContacts(context) ? "blocking" : "allowing"));
+                    if(SharedPreferencesHelper.filterUnkwnownContacts(context)) {
+                        rejectIncomingCall(context);
+                        return;
+                    }
+                } else {
+                    // Known contact
+                    Log.d(TAG, "Matching incoming call contact: " + contact.getmDisplayName());
+                    Set<String> intersection = new HashSet<String>(contact.getmGroupIds());
+                    intersection.retainAll(SharedPreferencesHelper.getGroupIdsToFilter(context));
+                    if (intersection.size() > 0) {
+                        // At least one of the contact's groups is filtered
+                        Log.d(TAG, "Blocking incoming call because " + contact.getmDisplayName() + " belongs to " + intersection.size() + " blocked group(s)");
+                        rejectIncomingCall(context);
+                    } else {
+                        // This contact's groups are not filtered
+                        Log.d(TAG, "Allowing incoming call");
+                        return;
+                    }
+                }
                 break;
         }
     }
 
     private void rejectIncomingCall(Context context) {
+        final String TAG = this.TAG + ", rejectIncomingCall()";
+        Log.d(TAG, " ");
         ITelephony telephonyService;
         final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         try {
@@ -100,6 +125,8 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void silenceIncomingCall(Context context) {
+        final String TAG = this.TAG + ", silenceIncomingCall()";
+        Log.d(TAG, " ");
         ITelephony telephonyService;
         final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         try {

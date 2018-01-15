@@ -16,7 +16,9 @@ public class SharedPreferencesHelper {
     private final static String SHARED_PREFERENCES_FILE = "call_filter_shared_preferences";
 
     // Keys
-    private final static String KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION = "KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION";
+    private final static String KEY_BOOLEAN_CALL_FILTERING_ACTIVATION = "KEY_BOOLEAN_CALL_FILTERING_ACTIVATION";
+    private final static String KEY_BOOLEAN_FILTER_ALL_CONTACTS = "KEY_BOOLEAN_FILTER_ALL_CONTACTS";
+    private final static String KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS = "KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS";
     private final static String KEY_STRING_GROUPS_TO_FILTER = "KEY_STRING_GROUPS_TO_FILTER";
 
     // Basic getters and setters
@@ -57,12 +59,28 @@ public class SharedPreferencesHelper {
     }
 
     // Specific getters and setters
-    public static boolean isGlobalFilteringActivated(Context context) {
-        return getSharedPreferenceBoolean(context, KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, false);
+    public static boolean isCallFilteringActivated(Context context) {
+        return getSharedPreferenceBoolean(context, KEY_BOOLEAN_CALL_FILTERING_ACTIVATION, false);
     }
 
-    public static void isGlobalFilteringActivated(Context context, boolean isActivated) {
-        setSharedPreferenceBoolean(context, KEY_BOOLEAN_GLOBAL_FILTERING_ACTIVATION, isActivated);
+    public static void isCallFilteringActivated(Context context, boolean isActivated) {
+        setSharedPreferenceBoolean(context, KEY_BOOLEAN_CALL_FILTERING_ACTIVATION, isActivated);
+    }
+
+    public static boolean filterAllContacts(Context context) {
+        return getSharedPreferenceBoolean(context, KEY_BOOLEAN_FILTER_ALL_CONTACTS, false);
+    }
+
+    public static void filterAllContacts(Context context, boolean filter) {
+        setSharedPreferenceBoolean(context, KEY_BOOLEAN_FILTER_ALL_CONTACTS, filter);
+    }
+
+    public static boolean filterUnkwnownContacts(Context context) {
+        return getSharedPreferenceBoolean(context, KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS, false);
+    }
+
+    public static void filterUnkwnownContacts(Context context, boolean filter) {
+        setSharedPreferenceBoolean(context, KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS, filter);
     }
 
     public static HashSet<String> getGroupIdsToFilter(Context context) {

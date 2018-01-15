@@ -1,17 +1,16 @@
 package com.avisto.callfilter;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,8 +22,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, GroupsAdapter.GroupFilterCheckedChangedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    // TODO: texts are not so clear. Activating the switch BLOCKS the group from calling
 
     // Required permissions
     private static final String[] requiredPermissions = new String[]{
@@ -38,6 +35,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     // Views
     private Switch mGlobalSwitch;
+    private TextView mStateTextView;
+    private Switch mFilterAllContactsSwitch;
+    private Switch mFilterUnknownContactsSwitch;
+    private TextView mContactGroupsTextView;
     private RecyclerView mRecyclerView;
     private GroupsAdapter mGroupsAdapter;
 
@@ -66,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         // Get views
         mGlobalSwitch = findViewById(R.id.switch_global);
+        mStateTextView = findViewById(R.id.text_view_state);
+        mFilterAllContactsSwitch = findViewById(R.id.switch_filter_all_contacts);
+        mFilterUnknownContactsSwitch = findViewById(R.id.switch_filter_unknown_contacts);
+        mContactGroupsTextView = findViewById(R.id.text_view_contact_groups);
         mRecyclerView = findViewById(R.id.recycler_view);
 
         // Set groups to recycler view
@@ -75,9 +80,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         // Set listeners
         mGlobalSwitch.setOnCheckedChangeListener(this);
+        mFilterAllContactsSwitch.setOnCheckedChangeListener(this);
+        mFilterUnknownContactsSwitch.setOnCheckedChangeListener(this);
 
         updateUI();
-
     }
 
 
@@ -85,15 +91,23 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         switch (compoundButton.getId()) {
             case R.id.switch_global:
-                SharedPreferencesHelper.isGlobalFilteringActivated(this, isChecked);
-                mRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                SharedPreferencesHelper.isCallFilteringActivated(this, isChecked);
+                updateUI();
+                break;
+            case R.id.switch_filter_all_contacts:
+                SharedPreferencesHelper.filterAllContacts(this, isChecked);
+                updateUI();
+                break;
+            case R.id.switch_filter_unknown_contacts:
+                SharedPreferencesHelper.filterUnkwnownContacts(this, isChecked);
+                break;
         }
     }
 
     // Recycler view
     @Override
-    public void onGroupFilterCheckedChanged(String groupId, boolean isChecked) {
-        if (isChecked) {
+    public void onGroupFilterCheckedChanged(String groupId, boolean isFiltered) {
+        if (isFiltered) {
             mGroupIdsToFilter.add(groupId);
         } else {
             mGroupIdsToFilter.remove(groupId);
@@ -102,9 +116,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private void updateUI() {
-        // Global filtering
-        final boolean isGlobalFilteringActivated = SharedPreferencesHelper.isGlobalFilteringActivated(this);
-        mGlobalSwitch.setChecked(isGlobalFilteringActivated);
-        mRecyclerView.setVisibility(isGlobalFilteringActivated ? View.VISIBLE : View.GONE);
+        final boolean isCallFilteringActivated = SharedPreferencesHelper.isCallFilteringActivated(this);
+        final boolean filterAllContacts = SharedPreferencesHelper.filterAllContacts(this);
+        final boolean filterUnknownContacts = SharedPreferencesHelper.filterUnkwnownContacts(this);
+
+        mStateTextView.setText(getString(isCallFilteringActivated ? R.string.text_view_call_filtering_enabled : R.string.text_view_call_filtering_disabled));
+
+        mGlobalSwitch.setChecked(isCallFilteringActivated);
+        mFilterAllContactsSwitch.setChecked(filterAllContacts);
+        mFilterUnknownContactsSwitch.setChecked(filterUnknownContacts);
+
+        mFilterAllContactsSwitch.setVisibility(isCallFilteringActivated ? View.VISIBLE : View.GONE);
+        mFilterUnknownContactsSwitch.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
+        mContactGroupsTextView.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
     }
 }
