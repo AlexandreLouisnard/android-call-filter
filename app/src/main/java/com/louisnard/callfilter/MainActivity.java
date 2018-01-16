@@ -1,4 +1,4 @@
-package com.avisto.callfilter;
+package com.louisnard.callfilter;
 
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;

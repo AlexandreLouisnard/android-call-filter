@@ -1,4 +1,4 @@
-package com.avisto.callfilter;
+package com.louisnard.callfilter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

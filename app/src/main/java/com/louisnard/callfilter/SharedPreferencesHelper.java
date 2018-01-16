@@ -1,4 +1,4 @@
-package com.avisto.callfilter;
+package com.louisnard.callfilter;
 
 import android.content.Context;
 import android.content.SharedPreferences;

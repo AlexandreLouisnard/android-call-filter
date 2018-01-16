@@ -1,4 +1,4 @@
-package com.avisto.callfilter;
+package com.louisnard.callfilter;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.avisto.callfilter", appContext.getPackageName());
+        assertEquals("com.louisnard.callfilter", appContext.getPackageName());
     }
 }

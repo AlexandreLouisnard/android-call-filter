@@ -1,4 +1,4 @@
-package com.avisto.callfilter;
+package com.louisnard.callfilter;
 
 import android.content.ContentResolver;
 import android.content.Context;
