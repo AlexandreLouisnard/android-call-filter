@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android-call-filter.iml" filepath="$PROJECT_DIR$/android-call-filter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\louisnard\Documents\1.workspace\android-call-filter\call-filter.iml" filepath="C:\Users\louisnard\Documents\1.workspace\android-call-filter\call-filter.iml" />
     </modules>
   </component>
 </project>
