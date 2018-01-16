@@ -18,9 +18,6 @@ import java.util.Set;
 
 public class CallBroadcastReceiver extends BroadcastReceiver {
 
-    // TODO improvement : choose between reject call (goes to voicemail) and silence call (no ring tone)
-    // TODO improvement : generate notification when a call has been blocked
-
     private static final String TAG = CallBroadcastReceiver.class.getSimpleName();
 
     // Actions
