@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="@dimen/indentation_1_spacing"
-        android:text="@string/switch_all_contacts"/>
+        android:text="@string/switch_all_numbers"/>
 
     <Switch
         android:id="@+id/switch_filter_unknown_contacts"

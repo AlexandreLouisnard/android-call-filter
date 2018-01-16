@@ -6,7 +6,7 @@
     <string name="switch_enable_filtering">Enable call filtering</string>
     <string name="text_view_call_filtering_disabled">Call filtering is currently disabled</string>
     <string name="text_view_call_filtering_enabled">BLOCK calls from : </string>
-    <string name="switch_all_contacts">All contacts</string>
+    <string name="switch_all_numbers">All phone numbers</string>
     <string name="switch_unknown_contacts">Unkwnown contacts</string>
     <string name="text_view_contact_groups">Contact groups :</string>
     <string name="no_groups_found">No contact groups found</string>
