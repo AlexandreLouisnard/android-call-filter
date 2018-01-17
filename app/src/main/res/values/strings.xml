@@ -11,4 +11,6 @@
     <string name="text_view_contact_groups">Contact groups :</string>
     <string name="no_groups_found">No contact groups found</string>
 
+    <!--Notifications-->
+    <string name="notification_call_filtering_enabled">Call filtering enabled</string>
 </resources>

@@ -13,13 +13,13 @@ import java.util.HashSet;
 public class SharedPreferencesHelper {
 
     // File
-    private final static String SHARED_PREFERENCES_FILE = "call_filter_shared_preferences";
+    public final static String SHARED_PREFERENCES_FILE = "call_filter_shared_preferences";
 
     // Keys
-    private final static String KEY_BOOLEAN_CALL_FILTERING_ACTIVATION = "KEY_BOOLEAN_CALL_FILTERING_ACTIVATION";
-    private final static String KEY_BOOLEAN_FILTER_ALL_CONTACTS = "KEY_BOOLEAN_FILTER_ALL_CONTACTS";
-    private final static String KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS = "KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS";
-    private final static String KEY_STRING_GROUPS_TO_FILTER = "KEY_STRING_GROUPS_TO_FILTER";
+    public final static String KEY_BOOLEAN_CALL_FILTERING_ACTIVATION = "KEY_BOOLEAN_CALL_FILTERING_ACTIVATION";
+    public final static String KEY_BOOLEAN_FILTER_ALL_CONTACTS = "KEY_BOOLEAN_FILTER_ALL_CONTACTS";
+    public final static String KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS = "KEY_BOOLEAN_FILTER_UNKWNOWN_CONTACTS";
+    public final static String KEY_STRING_GROUPS_TO_FILTER = "KEY_STRING_GROUPS_TO_FILTER";
 
     // Basic getters and setters
     private static String getSharedPreferenceString(Context context, String key, String defValue) {
@@ -58,7 +58,6 @@ public class SharedPreferencesHelper {
         editor.apply();
     }
 
-    // Specific getters and setters
     public static boolean isCallFilteringActivated(Context context) {
         return getSharedPreferenceBoolean(context, KEY_BOOLEAN_CALL_FILTERING_ACTIVATION, false);
     }

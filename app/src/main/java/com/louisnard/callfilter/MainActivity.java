@@ -1,6 +1,8 @@
 package com.louisnard.callfilter;
 
 import android.Manifest;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,16 +17,18 @@ import android.widget.TextView;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.louisnard.callfilter.SharedPreferencesHelper.SHARED_PREFERENCES_FILE;
+
 /**
  * Created by louisnard on 11/01/2018.
  */
 
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, GroupsAdapter.GroupFilterCheckedChangedListener {
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, GroupsAdapter.GroupFilterCheckedChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     // Required permissions
-    private static final String[] requiredPermissions = new String[]{
+    private static final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_CONTACTS};
@@ -54,36 +58,40 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         setContentView(R.layout.activity_main);
 
         // Request permissions
-        if (!UtilsHelper.hasPermissions(this, requiredPermissions)) {
+        if (!UtilsHelper.hasPermissions(this, REQUIRED_PERMISSIONS)) {
             Log.d(TAG, "Requesting permissions...");
-            ActivityCompat.requestPermissions(this, requiredPermissions, REQUEST_CODE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         } else {
             Log.d(TAG, "Permissions already granted");
+
+            // Get groups
+            mGroups = GroupHelper.getAllGroups(this);
+            mGroupIdsToFilter = SharedPreferencesHelper.getGroupIdsToFilter(this);
+
+            // Get views
+            mGlobalSwitch = findViewById(R.id.switch_global);
+            mStateTextView = findViewById(R.id.text_view_state);
+            mFilterAllContactsSwitch = findViewById(R.id.switch_filter_all_contacts);
+            mFilterUnknownContactsSwitch = findViewById(R.id.switch_filter_unknown_contacts);
+            mContactGroupsTextView = findViewById(R.id.text_view_contact_groups);
+            mRecyclerView = findViewById(R.id.recycler_view);
+
+            // Set groups to recycler view
+            mGroupsAdapter = new GroupsAdapter(this, mGroups, mGroupIdsToFilter, this);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            mRecyclerView.setAdapter(mGroupsAdapter);
+
+            // Set listeners
+            mGlobalSwitch.setOnCheckedChangeListener(this);
+            mFilterAllContactsSwitch.setOnCheckedChangeListener(this);
+            mFilterUnknownContactsSwitch.setOnCheckedChangeListener(this);
+
+            // Shared preferences change listener
+            final SharedPreferences sharedPrefs = getSharedPreferences(SHARED_PREFERENCES_FILE, 0);
+            sharedPrefs.registerOnSharedPreferenceChangeListener(this);
+
+            updateUI();
         }
-
-        // Get groups
-        mGroups = GroupHelper.getAllGroups(this);
-        mGroupIdsToFilter = SharedPreferencesHelper.getGroupIdsToFilter(this);
-
-        // Get views
-        mGlobalSwitch = findViewById(R.id.switch_global);
-        mStateTextView = findViewById(R.id.text_view_state);
-        mFilterAllContactsSwitch = findViewById(R.id.switch_filter_all_contacts);
-        mFilterUnknownContactsSwitch = findViewById(R.id.switch_filter_unknown_contacts);
-        mContactGroupsTextView = findViewById(R.id.text_view_contact_groups);
-        mRecyclerView = findViewById(R.id.recycler_view);
-
-        // Set groups to recycler view
-        mGroupsAdapter = new GroupsAdapter(this, mGroups, mGroupIdsToFilter, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mRecyclerView.setAdapter(mGroupsAdapter);
-
-        // Set listeners
-        mGlobalSwitch.setOnCheckedChangeListener(this);
-        mFilterAllContactsSwitch.setOnCheckedChangeListener(this);
-        mFilterUnknownContactsSwitch.setOnCheckedChangeListener(this);
-
-        updateUI();
     }
 
 
@@ -130,5 +138,23 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         mFilterUnknownContactsSwitch.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
         mContactGroupsTextView.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
         mRecyclerView.setVisibility((isCallFilteringActivated && !filterAllContacts) ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(SharedPreferencesHelper.KEY_BOOLEAN_CALL_FILTERING_ACTIVATION)) {
+            final boolean isCallFilteringActivated = sharedPreferences.getBoolean(SharedPreferencesHelper.KEY_BOOLEAN_CALL_FILTERING_ACTIVATION, false);
+            UtilsHelper.displayPermanentNotification(this, isCallFilteringActivated);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(UtilsHelper.hasPermissions(this, REQUIRED_PERMISSIONS)) {
+            recreate();
+        } else {
+            finish();
+        }
     }
 }
