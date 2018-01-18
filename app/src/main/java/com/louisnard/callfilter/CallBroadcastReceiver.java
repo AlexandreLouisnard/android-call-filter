@@ -34,12 +34,14 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         final String action = intent.getAction();
         Log.d(TAG, "action = " + action);
 
-        if (!SharedPreferencesHelper.isCallFilteringActivated(context)) {
-            Log.d(TAG, "Call filtering is NOT activating, returning now");
-            return;
-        }
+        // Show notification if needed
+        UtilsHelper.displayPermanentNotification(context, SharedPreferencesHelper.isCallFilteringActivated(context));
 
         if (action == ACTION_PHONE_STATE) {
+            if (!SharedPreferencesHelper.isCallFilteringActivated(context)) {
+                Log.d(TAG, "Call filtering is NOT activating, returning now");
+                return;
+            }
             // Get phone call state and number
             final String stateString = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
             final String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);

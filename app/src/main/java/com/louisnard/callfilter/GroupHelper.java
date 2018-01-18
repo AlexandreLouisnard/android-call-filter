@@ -24,7 +24,7 @@ public class GroupHelper {
                 new String[]{
                         ContactsContract.Groups._ID,
                         ContactsContract.Groups.TITLE
-                }, null, null, null
+                }, null, null, ContactsContract.Groups.TITLE
         );
 
         final List<Group> groups = new ArrayList<>();

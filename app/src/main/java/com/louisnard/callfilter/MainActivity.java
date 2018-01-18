@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private static final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.READ_CONTACTS};
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.RECEIVE_BOOT_COMPLETED};
 
     // Groups
     private List<Group> mGroups;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         } else {
             Log.d(TAG, "Permissions already granted");
+
+            // Show notification if needed
+            UtilsHelper.displayPermanentNotification(this, SharedPreferencesHelper.isCallFilteringActivated(this));
 
             // Get groups
             mGroups = GroupHelper.getAllGroups(this);
@@ -143,15 +147,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(SharedPreferencesHelper.KEY_BOOLEAN_CALL_FILTERING_ACTIVATION)) {
-            final boolean isCallFilteringActivated = sharedPreferences.getBoolean(SharedPreferencesHelper.KEY_BOOLEAN_CALL_FILTERING_ACTIVATION, false);
-            UtilsHelper.displayPermanentNotification(this, isCallFilteringActivated);
+            // Show notification if needed
+            UtilsHelper.displayPermanentNotification(this, SharedPreferencesHelper.isCallFilteringActivated(this));
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(UtilsHelper.hasPermissions(this, REQUIRED_PERMISSIONS)) {
+        if (UtilsHelper.hasPermissions(this, REQUIRED_PERMISSIONS)) {
             recreate();
         } else {
             finish();
