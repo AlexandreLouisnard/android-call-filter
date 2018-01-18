@@ -65,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         } else {
             Log.d(TAG, "Permissions already granted");
 
-            // Show notification if needed
-            UtilsHelper.displayPermanentNotification(this, SharedPreferencesHelper.isCallFilteringActivated(this));
-
             // Get groups
             mGroups = GroupHelper.getAllGroups(this);
             mGroupIdsToFilter = SharedPreferencesHelper.getGroupIdsToFilter(this);
@@ -98,6 +95,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Show notification if needed
+        UtilsHelper.displayPermanentNotification(this, SharedPreferencesHelper.isCallFilteringActivated(this));
+    }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
